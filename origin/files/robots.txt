@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Mini CDN Robots File
+# This is a sample robots.txt served via the CDN
+# In production, this tells search engine crawlers which pages to index
+
+Sitemap: http://127.0.0.1:9000/files/sitemap.xml
+
+# Cache-friendly: small file, changes rarely
+# Perfect candidate for long TTL caching

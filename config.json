@@ -1,0 +1,24 @@
+{
+  "origin": {
+    "host": "127.0.0.1",
+    "port": 8000
+  },
+  "edge_servers": [
+    { "id": "edge-1", "host": "127.0.0.1", "port": 8001, "latency_ms": 10, "region": "US-East" },
+    { "id": "edge-2", "host": "127.0.0.1", "port": 8002, "latency_ms": 25, "region": "EU-West" },
+    { "id": "edge-3", "host": "127.0.0.1", "port": 8003, "latency_ms": 50, "region": "AP-South" }
+  ],
+  "router": {
+    "host": "127.0.0.1",
+    "port": 9000,
+    "strategy": "round-robin"
+  },
+  "cache": {
+    "ttl_seconds": 30,
+    "max_size_mb": 50
+  },
+  "dashboard": {
+    "host": "127.0.0.1",
+    "port": 5000
+  }
+}

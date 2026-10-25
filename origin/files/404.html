@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Error 404 — Mini CDN</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .error-container { text-align: center; padding: 60px 20px; }
+    .error-code { font-size: 6rem; font-weight: 900; color: #ef4444; line-height: 1; }
+    .error-msg { font-size: 1.4rem; color: #94a3b8; margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-code">404</div>
+    <div class="error-msg">This file was not found on the origin server.</div>
+    <p>The CDN edge server tried to fetch this file but the origin returned a 404.</p>
+    <p>This page itself is cached on the edge — so even error pages can be served fast!</p>
+    <p><a href="index.html">← Back to Home</a></p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

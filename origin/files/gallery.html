@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gallery — Mini CDN</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+    .gallery-item {
+      background: #1e293b; border: 1px solid #334155; border-radius: 12px;
+      padding: 24px; text-align: center; color: #e2e8f0;
+    }
+    .gallery-item .emoji { font-size: 48px; margin-bottom: 8px; }
+    .gallery-item h3 { margin: 8px 0 4px; }
+    .gallery-item p { color: #94a3b8; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <h1>🖼️ Image Gallery</h1>
+  <p>In a real CDN, images are the most commonly cached assets. Here's a simulated gallery:</p>
+  <div class="gallery">
+    <div class="gallery-item"><div class="emoji">🏔️</div><h3>Mountains</h3><p>landscape_01.jpg — 2.4 MB</p></div>
+    <div class="gallery-item"><div class="emoji">🌊</div><h3>Ocean</h3><p>ocean_sunset.jpg — 1.8 MB</p></div>
+    <div class="gallery-item"><div class="emoji">🌆</div><h3>City</h3><p>skyline_night.jpg — 3.1 MB</p></div>
+    <div class="gallery-item"><div class="emoji">🌲</div><h3>Forest</h3><p>redwood_trail.jpg — 2.7 MB</p></div>
+    <div class="gallery-item"><div class="emoji">🏜️</div><h3>Desert</h3><p>sand_dunes.jpg — 1.5 MB</p></div>
+    <div class="gallery-item"><div class="emoji">🌌</div><h3>Space</h3><p>nebula_hd.jpg — 4.2 MB</p></div>
+  </div>
+  <p><a href="index.html">← Back to Home</a></p>
+  <script src="script.js"></script>
+</body>
+</html>

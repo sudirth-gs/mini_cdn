@@ -1,0 +1,18 @@
+{
+  "users": [
+    { "id": 1, "name": "Alice", "role": "admin", "region": "US-East" },
+    { "id": 2, "name": "Bob", "role": "viewer", "region": "EU-West" },
+    { "id": 3, "name": "Charlie", "role": "editor", "region": "AP-South" },
+    { "id": 4, "name": "Diana", "role": "viewer", "region": "US-West" },
+    { "id": 5, "name": "Eve", "role": "admin", "region": "EU-Central" }
+  ],
+  "settings": {
+    "theme": "dark",
+    "language": "en",
+    "notifications": true,
+    "cache_enabled": true,
+    "max_upload_mb": 25
+  },
+  "version": "1.0.0",
+  "last_updated": "2026-10-25T12:00:00Z"
+}

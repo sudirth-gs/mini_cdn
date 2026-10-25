@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini CDN — Test Page</title>
+
+  <!-- Stylesheet served through the CDN / origin -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1>Welcome to Mini CDN</h1>
+
+  <p>
+    This is a test origin file served by the <strong>Mini CDN</strong> origin
+    server.  It demonstrates that static assets (HTML, CSS, JavaScript) can be
+    fetched from the origin and cached by edge/proxy nodes in the network.
+  </p>
+
+  <p>
+    <a href="about.html">Learn more about this project →</a>
+  </p>
+
+  <!-- JavaScript served through the CDN / origin -->
+  <script src="script.js"></script>
+</body>
+</html>

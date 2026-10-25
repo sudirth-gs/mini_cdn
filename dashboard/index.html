@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌐 Mini CDN — Interactive Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════ HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <h1>🌐 Mini CDN Dashboard</h1>
+      <span class="subtitle">Computer Networks Project — Interactive Visualization</span>
+    </div>
+    <div class="header-right">
+      <span id="last-updated" class="badge badge-muted">Connecting…</span>
+      <button class="btn btn-secondary" onclick="fetchStats()" title="Refresh now">⟳ Refresh</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════ TOPOLOGY -->
+  <section class="section">
+    <h2 class="section-title">Network Topology</h2>
+    <p class="section-desc">Click <strong>"Send Request"</strong> below to watch a request flow through the CDN in real time.</p>
+
+    <div class="topology-container">
+      <svg id="topology-svg" class="topology-svg" viewBox="0 0 1000 340" preserveAspectRatio="xMidYMid meet">
+        <!-- Connection lines (drawn behind nodes) -->
+        <!-- Client → Router -->
+        <line id="line-client-router" x1="100" y1="170" x2="340" y2="170" class="topology-line" />
+        <!-- Router → Edges -->
+        <line id="line-router-edge1" x1="420" y1="170" x2="600" y2="60"  class="topology-line" />
+        <line id="line-router-edge2" x1="420" y1="170" x2="600" y2="170" class="topology-line" />
+        <line id="line-router-edge3" x1="420" y1="170" x2="600" y2="280" class="topology-line" />
+        <!-- Edges → Origin -->
+        <line id="line-edge1-origin" x1="700" y1="60"  x2="880" y2="170" class="topology-line" />
+        <line id="line-edge2-origin" x1="700" y1="170" x2="880" y2="170" class="topology-line" />
+        <line id="line-edge3-origin" x1="700" y1="280" x2="880" y2="170" class="topology-line" />
+
+        <!-- Animated packets (hidden by default) -->
+        <circle id="packet-fwd" r="6" class="packet packet-fwd" style="display:none" />
+        <circle id="packet-back" r="6" class="packet packet-back" style="display:none" />
+
+        <!-- Client node -->
+        <g id="node-client" class="topology-node" transform="translate(100,170)">
+          <rect x="-55" y="-30" width="110" height="60" rx="12" class="node-box node-client" />
+          <text y="-6" class="node-icon">💻</text>
+          <text y="18" class="node-label">Client</text>
+        </g>
+
+        <!-- Router node -->
+        <g id="node-router" class="topology-node" transform="translate(380,170)">
+          <rect x="-55" y="-30" width="110" height="60" rx="12" class="node-box node-router" />
+          <text y="-6" class="node-icon">🔀</text>
+          <text y="18" class="node-label">Router</text>
+          <text y="45" class="node-detail">:9000</text>
+        </g>
+
+        <!-- Edge nodes -->
+        <g id="node-edge-1" class="topology-node" transform="translate(650,60)">
+          <rect x="-55" y="-30" width="110" height="60" rx="12" class="node-box node-edge" />
+          <text y="-6" class="node-icon">📦</text>
+          <text y="18" class="node-label">Edge 1</text>
+          <text y="45" class="node-detail" id="topo-edge1-detail">US-East · 10ms</text>
+          <circle cx="50" cy="-25" r="5" id="topo-edge1-dot" class="status-dot dot-offline" />
+        </g>
+        <g id="node-edge-2" class="topology-node" transform="translate(650,170)">
+          <rect x="-55" y="-30" width="110" height="60" rx="12" class="node-box node-edge" />
+          <text y="-6" class="node-icon">📦</text>
+          <text y="18" class="node-label">Edge 2</text>
+          <text y="45" class="node-detail" id="topo-edge2-detail">EU-West · 25ms</text>
+          <circle cx="50" cy="-25" r="5" id="topo-edge2-dot" class="status-dot dot-offline" />
+        </g>
+        <g id="node-edge-3" class="topology-node" transform="translate(650,280)">
+          <rect x="-55" y="-30" width="110" height="60" rx="12" class="node-box node-edge" />
+          <text y="-6" class="node-icon">📦</text>
+          <text y="18" class="node-label">Edge 3</text>
+          <text y="45" class="node-detail" id="topo-edge3-detail">AP-South · 50ms</text>
+          <circle cx="50" cy="-25" r="5" id="topo-edge3-dot" class="status-dot dot-offline" />
+        </g>
+
+        <!-- Origin node -->
+        <g id="node-origin" class="topology-node" transform="translate(900,170)">
+          <rect x="-55" y="-30" width="110" height="60" rx="12" class="node-box node-origin" />
+          <text y="-6" class="node-icon">🗄️</text>
+          <text y="18" class="node-label">Origin</text>
+          <text y="45" class="node-detail">:8000</text>
+        </g>
+      </svg>
+
+      <!-- Narration box below the topology -->
+      <div id="narration" class="narration">
+        <span class="narration-icon">💡</span>
+        <span id="narration-text">Ready! Send a request to see how a CDN delivers content.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ SEND REQUEST PANEL -->
+  <section class="section">
+    <h2 class="section-title">🚀 Send a Request</h2>
+    <div class="request-panel">
+      <div class="request-controls">
+        <label class="field-label">File to request:</label>
+        <select id="file-select" class="select-input">
+          <optgroup label="HTML Pages">
+            <option value="index.html">index.html</option>
+            <option value="about.html">about.html</option>
+            <option value="contact.html">contact.html</option>
+            <option value="blog.html">blog.html</option>
+            <option value="gallery.html">gallery.html</option>
+            <option value="stats.html">stats.html</option>
+            <option value="404.html">404.html</option>
+          </optgroup>
+          <optgroup label="Stylesheets">
+            <option value="style.css">style.css</option>
+            <option value="theme-dark.css">theme-dark.css</option>
+          </optgroup>
+          <optgroup label="JavaScript">
+            <option value="script.js">script.js</option>
+            <option value="app.js">app.js</option>
+          </optgroup>
+          <optgroup label="Data Files">
+            <option value="api.json">api.json</option>
+            <option value="data.json">data.json</option>
+            <option value="analytics.csv">analytics.csv</option>
+            <option value="docs.md">docs.md</option>
+            <option value="robots.txt">robots.txt</option>
+          </optgroup>
+        </select>
+        <button id="send-btn" class="btn btn-primary btn-lg" onclick="sendRequest()">
+          ▶ Send Request
+        </button>
+        <button class="btn btn-secondary btn-lg" onclick="sendBurst()">
+          ⚡ Send 10 Requests
+        </button>
+      </div>
+      <div id="request-result" class="request-result hidden">
+        <div class="result-row">
+          <span class="result-label">Status</span>
+          <span id="res-status" class="badge">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Cache</span>
+          <span id="res-cache" class="badge">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Edge Server</span>
+          <span id="res-edge" class="badge badge-blue">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Latency</span>
+          <span id="res-latency" class="badge badge-muted">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Content-Type</span>
+          <span id="res-ctype" class="badge badge-muted">—</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ LIVE STATS -->
+  <section class="section">
+    <h2 class="section-title">📊 Live Statistics</h2>
+
+    <!-- Router summary -->
+    <div class="router-summary">
+      <div class="stat-pill">
+        <span class="stat-pill-label">Total Routed</span>
+        <span class="stat-pill-value" id="total-requests">0</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-pill-label">Strategy</span>
+        <span class="stat-pill-value" id="strategy">round-robin</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-pill-label">Overall Hit Rate</span>
+        <span class="stat-pill-value" id="overall-hit-rate">0%</span>
+      </div>
+    </div>
+
+    <!-- Edge cards grid -->
+    <div class="edge-grid">
+      <!-- Edge 1 -->
+      <div class="card edge-card" id="card-edge-1">
+        <div class="card-header">
+          <div class="card-title-row">
+            <span class="card-title">📦 Edge 1</span>
+            <span class="status-indicator" id="status-edge-1">
+              <span class="dot dot-offline"></span> Offline
+            </span>
+          </div>
+          <div class="badge-row">
+            <span class="badge badge-blue" id="region-edge-1">—</span>
+            <span class="badge" id="latency-badge-edge-1">—</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="stat-row">
+            <span>Requests</span>
+            <strong id="reqs-edge-1">0</strong>
+          </div>
+          <div class="stat-row">
+            <span>Cache Hits</span>
+            <strong class="text-green" id="hits-edge-1">0</strong>
+          </div>
+          <div class="stat-row">
+            <span>Cache Misses</span>
+            <strong class="text-red" id="misses-edge-1">0</strong>
+          </div>
+          <div class="hit-rate-section">
+            <div class="hit-rate-label">
+              <span>Hit Rate</span>
+              <strong id="hitrate-edge-1">0%</strong>
+            </div>
+            <div class="hit-rate-bar">
+              <div class="hit-rate-fill" id="hitrate-fill-edge-1" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="cached-files-section">
+            <span class="cached-label">Cached Files:</span>
+            <div class="cached-files" id="cached-edge-1">
+              <span class="badge badge-muted">None</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edge 2 -->
+      <div class="card edge-card" id="card-edge-2">
+        <div class="card-header">
+          <div class="card-title-row">
+            <span class="card-title">📦 Edge 2</span>
+            <span class="status-indicator" id="status-edge-2">
+              <span class="dot dot-offline"></span> Offline
+            </span>
+          </div>
+          <div class="badge-row">
+            <span class="badge badge-blue" id="region-edge-2">—</span>
+            <span class="badge" id="latency-badge-edge-2">—</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="stat-row">
+            <span>Requests</span>
+            <strong id="reqs-edge-2">0</strong>
+          </div>
+          <div class="stat-row">
+            <span>Cache Hits</span>
+            <strong class="text-green" id="hits-edge-2">0</strong>
+          </div>
+          <div class="stat-row">
+            <span>Cache Misses</span>
+            <strong class="text-red" id="misses-edge-2">0</strong>
+          </div>
+          <div class="hit-rate-section">
+            <div class="hit-rate-label">
+              <span>Hit Rate</span>
+              <strong id="hitrate-edge-2">0%</strong>
+            </div>
+            <div class="hit-rate-bar">
+              <div class="hit-rate-fill" id="hitrate-fill-edge-2" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="cached-files-section">
+            <span class="cached-label">Cached Files:</span>
+            <div class="cached-files" id="cached-edge-2">
+              <span class="badge badge-muted">None</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edge 3 -->
+      <div class="card edge-card" id="card-edge-3">
+        <div class="card-header">
+          <div class="card-title-row">
+            <span class="card-title">📦 Edge 3</span>
+            <span class="status-indicator" id="status-edge-3">
+              <span class="dot dot-offline"></span> Offline
+            </span>
+          </div>
+          <div class="badge-row">
+            <span class="badge badge-blue" id="region-edge-3">—</span>
+            <span class="badge" id="latency-badge-edge-3">—</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="stat-row">
+            <span>Requests</span>
+            <strong id="reqs-edge-3">0</strong>
+          </div>
+          <div class="stat-row">
+            <span>Cache Hits</span>
+            <strong class="text-green" id="hits-edge-3">0</strong>
+          </div>
+          <div class="stat-row">
+            <span>Cache Misses</span>
+            <strong class="text-red" id="misses-edge-3">0</strong>
+          </div>
+          <div class="hit-rate-section">
+            <div class="hit-rate-label">
+              <span>Hit Rate</span>
+              <strong id="hitrate-edge-3">0%</strong>
+            </div>
+            <div class="hit-rate-bar">
+              <div class="hit-rate-fill" id="hitrate-fill-edge-3" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="cached-files-section">
+            <span class="cached-label">Cached Files:</span>
+            <div class="cached-files" id="cached-edge-3">
+              <span class="badge badge-muted">None</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ CACHE CONTROL -->
+  <section class="section">
+    <h2 class="section-title">🗑️ Cache Control</h2>
+    <div class="cache-control-panel">
+      <div class="cache-control-row">
+        <input type="text" id="invalidate-input" class="text-input" placeholder="filename (e.g. index.html)" />
+        <button class="btn btn-warning" onclick="invalidateFile()">Invalidate File</button>
+        <button class="btn btn-danger" onclick="invalidateAll()">🧹 Purge All Caches</button>
+      </div>
+      <p class="cache-hint">Invalidation broadcasts to all 3 edge servers simultaneously. Watch the hit rate drop!</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ REQUEST LOG -->
+  <section class="section">
+    <h2 class="section-title">📝 Request Log</h2>
+    <div class="log-container" id="log-container">
+      <div class="log-empty">No requests yet. Hit "Send Request" above!</div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ HOW IT WORKS -->
+  <section class="section">
+    <h2 class="section-title">📚 How a CDN Works</h2>
+    <div class="explainer-grid">
+      <div class="explainer-card">
+        <div class="explainer-num">1</div>
+        <h3>Client Sends Request</h3>
+        <p>A user (you!) requests a file like <code>index.html</code>. The request first hits the <strong>Router</strong>.</p>
+      </div>
+      <div class="explainer-card">
+        <div class="explainer-num">2</div>
+        <h3>Router Load-Balances</h3>
+        <p>The router picks the next <strong>Edge Server</strong> using <em>round-robin</em> (cycling edge-1 → edge-2 → edge-3 → edge-1…).</p>
+      </div>
+      <div class="explainer-card">
+        <div class="explainer-num">3</div>
+        <h3>Edge Checks Cache</h3>
+        <p>The edge checks its <strong>in-memory cache</strong>. If the file exists and hasn't expired (TTL = 30s), it's a <span class="text-green">CACHE HIT</span>!</p>
+      </div>
+      <div class="explainer-card">
+        <div class="explainer-num">4</div>
+        <h3>Cache Miss → Origin</h3>
+        <p>On a <span class="text-red">CACHE MISS</span>, the edge fetches the file from the <strong>Origin Server</strong>, caches it, then serves it.</p>
+      </div>
+      <div class="explainer-card">
+        <div class="explainer-num">5</div>
+        <h3>Simulated Latency</h3>
+        <p>Each edge has a regional delay (10/25/50ms) simulating how distance affects response time in a real CDN.</p>
+      </div>
+      <div class="explainer-card">
+        <div class="explainer-num">6</div>
+        <h3>Cache Expiry (TTL)</h3>
+        <p>After <strong>30 seconds</strong>, cached files expire. The next request will be a MISS again — fetch fresh content from origin.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Mini CDN — Computer Networks Project · Built with FastAPI + Vanilla JS</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

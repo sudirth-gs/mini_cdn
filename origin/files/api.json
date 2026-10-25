@@ -1,0 +1,41 @@
+{
+  "api_version": "1.0",
+  "project": "Mini CDN",
+  "description": "A simulated Content Delivery Network for Computer Networks class",
+  "endpoints": {
+    "origin": {
+      "base_url": "http://127.0.0.1:8000",
+      "routes": [
+        { "method": "GET", "path": "/files/{filename}", "description": "Serve a static file" },
+        { "method": "GET", "path": "/health", "description": "Health check" },
+        { "method": "GET", "path": "/stats", "description": "Request statistics" }
+      ]
+    },
+    "edge": {
+      "base_urls": [
+        "http://127.0.0.1:8001",
+        "http://127.0.0.1:8002",
+        "http://127.0.0.1:8003"
+      ],
+      "routes": [
+        { "method": "GET", "path": "/files/{filename}", "description": "Serve file from cache or origin" },
+        { "method": "GET", "path": "/stats", "description": "Cache and request statistics" },
+        { "method": "POST", "path": "/invalidate/{filename}", "description": "Remove file from cache" },
+        { "method": "POST", "path": "/invalidate-all", "description": "Clear entire cache" }
+      ]
+    },
+    "router": {
+      "base_url": "http://127.0.0.1:9000",
+      "routes": [
+        { "method": "GET", "path": "/files/{filename}", "description": "Load-balanced file request" },
+        { "method": "GET", "path": "/stats", "description": "Aggregated statistics" },
+        { "method": "POST", "path": "/invalidate/{filename}", "description": "Broadcast invalidation" }
+      ]
+    }
+  },
+  "config": {
+    "cache_ttl_seconds": 30,
+    "load_balancing": "round-robin",
+    "edge_count": 3
+  }
+}

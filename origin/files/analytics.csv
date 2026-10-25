@@ -1,0 +1,16 @@
+User-Agent,Requests,Cache_Hits,Cache_Misses,Avg_Latency_ms,Region
+Chrome/118,1247,1089,158,12.4,US-East
+Firefox/119,893,764,129,14.2,US-East
+Safari/17,456,401,55,11.8,US-West
+Edge/118,678,589,89,13.1,EU-West
+Chrome/118,2341,1987,354,28.6,EU-West
+Firefox/119,1102,945,157,31.2,EU-Central
+Safari/17,234,198,36,26.4,EU-West
+Chrome/118,1567,1290,277,52.8,AP-South
+Firefox/119,743,612,131,48.3,AP-Southeast
+Safari/17,189,156,33,55.1,AP-South
+Chrome/118,892,789,103,45.7,AP-East
+Mobile-Safari,345,267,78,62.4,AP-South
+Android-Chrome,567,423,144,58.9,AP-Southeast
+Bot/Googlebot,2100,0,2100,15.0,US-East
+Bot/Bingbot,890,0,890,22.3,US-West

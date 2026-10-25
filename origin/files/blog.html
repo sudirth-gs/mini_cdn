@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blog — Mini CDN</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>CDN Engineering Blog</h1>
+  <article>
+    <h2>Understanding Cache Invalidation</h2>
+    <p><em>October 2026</em></p>
+    <p>There are only two hard things in Computer Science: cache invalidation and naming things. In a CDN, cache invalidation is the process of removing stale content from edge servers so users always get fresh data.</p>
+    <h3>Strategies</h3>
+    <ul>
+      <li><strong>TTL-based:</strong> Content expires after a set time (e.g., 30 seconds). Simple but can serve stale data.</li>
+      <li><strong>Purge:</strong> Origin explicitly tells edges to drop specific files. Instant but requires coordination.</li>
+      <li><strong>Stale-while-revalidate:</strong> Serve stale content while fetching fresh version in background. Best of both worlds.</li>
+    </ul>
+  </article>
+  <article>
+    <h2>How Round-Robin Load Balancing Works</h2>
+    <p><em>October 2026</em></p>
+    <p>Round-robin is the simplest load balancing algorithm. Requests are distributed evenly across servers in a circular order: Server 1 → Server 2 → Server 3 → Server 1 → ...</p>
+    <p>Pros: Easy to implement, even distribution. Cons: Doesn't account for server load or proximity.</p>
+  </article>
+  <article>
+    <h2>Edge Computing: The Future of CDNs</h2>
+    <p><em>October 2026</em></p>
+    <p>Modern CDNs don't just cache static files — they run code at the edge. Services like Cloudflare Workers and AWS Lambda@Edge allow developers to execute serverless functions close to users, reducing latency for dynamic content too.</p>
+  </article>
+  <p><a href="index.html">← Back to Home</a></p>
+  <script src="script.js"></script>
+</body>
+</html>

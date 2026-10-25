@@ -1,0 +1,27 @@
+/* style.css — global styles for the Mini CDN test pages */
+
+/* Page layout: readable single-column, centred. */
+body {
+  font-family: sans-serif;
+  max-width: 800px;
+  margin: 0 auto;       /* centre horizontally */
+  padding: 20px;
+  line-height: 1.6;
+  color: #111827;       /* near-black for body text */
+  background-color: #f9fafb;
+}
+
+/* Primary heading colour — Tailwind blue-600 equivalent. */
+h1 {
+  color: #2563eb;
+}
+
+/* Link colour — Tailwind blue-700 equivalent. */
+a {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #1e40af; /* slightly darker on hover */
+}
