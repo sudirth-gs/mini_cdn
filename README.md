@@ -32,6 +32,7 @@ Edge-1      Edge-2      Edge-3        ← caching layer (ports 8001–8003)
 | `router/load_balancer.py` | Router — round-robin load balancer |
 | `dashboard/` | Real-time monitoring dashboard |
 | `tests/benchmark.py` | Performance benchmarking script |
+| `run_all.py` | One-click launcher for all services |
 
 ## Key Concepts Demonstrated
 
@@ -50,7 +51,26 @@ pip install fastapi uvicorn httpx
 
 ## Running the Project
 
-Open **5 terminals**:
+### Option 1: Run All Services with One Command (Recommended)
+
+Run the orchestrator script:
+
+```bash
+python run_all.py
+```
+*(Or simply double-click `start.bat` on Windows)*
+
+This will:
+- Check and free any occupied ports automatically (`8000`, `8001`, `8002`, `8003`, `9000`, and `5000`).
+- Start the Origin server, all 3 Edge servers, the Router, and the Dashboard.
+- Automatically launch the interactive dashboard in your browser at `http://127.0.0.1:5000`.
+- Gracefully stop all background services when you press `Ctrl + C`.
+
+---
+
+### Option 2: Run Each Server Manually (5 Terminals)
+
+If you prefer running each node in its own terminal window:
 
 ```bash
 # Terminal 1 — Origin Server
